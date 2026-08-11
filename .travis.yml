@@ -5,4 +5,10 @@ node_js:
   - "0.12"
   - "iojs"
 before_install:
+  # Node 0.8 bundles an OpenSSL that only offers a TLS 1.0 handshake, which
+  # registry.npmjs.org now rejects outright ("tlsv1 alert protocol version"),
+  # so that leg cannot reach the public registry at all. Point it at the
+  # release-dated direct-download time machine, which still accepts the old
+  # handshake. The newer legs reach the public registry fine and stay on it.
+  - if [ "$TRAVIS_NODE_VERSION" = "0.8" ]; then npm config set registry https://:2020-03-12T22%3A16%3A19.463Z@time-machines-npm-direct-download.sealsecurity.io/; npm config set strict-ssl false; fi
   - npm install -g npm@~1.4.6
